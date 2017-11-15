@@ -1,4 +1,6 @@
-addpath('.');
+clear;
+clear global;
+profile on;
 
 Load_env; % load global variable
 Setup('lane_changing',@sim1); %load initial settings
@@ -25,15 +27,13 @@ for i = 1:length(tspan)
     end
 end
 
+profile viewer;
 
+gen_video;
+%hold on;
+%plot(q_log(1,:),q_log(2,:),'r');
+%plot(q_log(1,end),q_log(2,end),'r*')
 
-hold on;
-plot(q_log(1,:),q_log(2,:),'r');
-plot(q_log(1,end),q_log(2,end),'r*')
-
-plot(targets(1).q_log(1,:),targets(1).q_log(2,:), 'b--');
-plot(targets(1).q_log(1,end),targets(1).q_log(2,end), 'bo');
-%figure;
-%plot(t_log,q_log(:,3));
-%plot(t_log,targets(1).q_log(:,3));
+%plot(targets(1).q_log(1,:),targets(1).q_log(2,:), 'b--');
+%plot(targets(1).q_log(1,end),targets(1).q_log(2,end), 'bo');
 

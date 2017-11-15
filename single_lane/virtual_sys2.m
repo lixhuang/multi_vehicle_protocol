@@ -1,3 +1,4 @@
+profile on;
 T=15;
 T_step=0.01;
 
@@ -51,6 +52,8 @@ for t=0:T_step:T
     q=q+dq*T_step;
     qd=qd+dqd*T_step;
 end
+
+profile viewer;
 
 hold on;
 plot(q_log(:,1),q_log(:,2),'r');

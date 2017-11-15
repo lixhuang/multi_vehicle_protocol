@@ -1,8 +1,8 @@
-function draw_car_red(x,y,theta,v)
+function draw_car_can(x,y,theta,v)
     w=2.4;
     l=4.5;
     if(~exist('red_car_image'))
-        red_car_image = imread('drawlib/element/red_car.png');
+        red_car_image = imread('drawlib/element/can_car.png');
     end
     if(nargin==3)
         v=l/2;

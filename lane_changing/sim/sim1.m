@@ -3,20 +3,20 @@ function sim1
     Load_env;
     
     TIME_STEP = 0.01;
-    SIM_LENGTH = 15;
+    SIM_LENGTH = 11;
     tspan = 0;
     
     % for Simple_4states_model
     % x; y; theta; v
-    q_init = [-3;1;0;3.1];
+    q_init = [4;0;0;3.1];
     q = q_init;
     q_dim = length(q_init);
     
     %setup targets
     targets_num = 1;
-    targets(1).q_init = [0;0;0;3];
+    targets(1).q_init = [-4;-3.7;0;3];
     targets(1).q = targets(1).q_init;
-    targets(1).u = [-0.01;0];
+    targets(1).u = [0;0];
     targets(1).q_dim = length(targets(1).q);
     
     %setup methods
