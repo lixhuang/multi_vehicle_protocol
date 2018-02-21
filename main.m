@@ -1,39 +1,37 @@
 clear;
 clear global;
-profile on;
+%profile on;
 
-Load_env; % load global variable
-Setup('lane_changing',@sim1); %load initial settings
+%Load_env; % load global variable
+env = Setup('lane_changing',@merge1); %load initial settings
 
 
-for i = 1:length(tspan)
-    %% system record
-    q_log(:,i) = q;
-    for k = 1:targets_num
-        targets(k).q_log(:,i) = targets(k).q;
-    end
-    
+for i = 1:length(env.tspan)
     %% generate sensor frame
-    sframe = Sensing();
+    sframe = env.Sensing(env);
+    env.i = i;
     
     %% calculate control
-    u = Controller(q, sframe);
-    Target_ctrl(i);
+    env = env.Controller(env.q, sframe, env);
+    env = env.Target_ctrl(env,i);
+    
+    %% system record
+    env.q_log(:,i) = env.q;
+    env.u_log(:,i) = env.u;
+    for k = 1:env.targets_num
+        env.targets(k).q_log(:,i) = env.targets(k).q;
+    end
     
     %% system envolve
-    q = q + Ego_dynam(q, u)*TIME_STEP;
-    for k = 1:targets_num
-        targets(k).q = targets(k).q + Target_dynam(targets(k).q, targets(k).u)*TIME_STEP;
+    env.q = env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
+    for k = 1:env.targets_num
+        env.targets(k).q = env.targets(k).q + .....
+            env.Target_dynam(env.targets(k).q, env.targets(k).u)*env.TIME_STEP;
     end
 end
 
-profile viewer;
+%profile viewer;
 
-gen_video;
-%hold on;
-%plot(q_log(1,:),q_log(2,:),'r');
-%plot(q_log(1,end),q_log(2,end),'r*')
-
-%plot(targets(1).q_log(1,:),targets(1).q_log(2,:), 'b--');
-%plot(targets(1).q_log(1,end),targets(1).q_log(2,end), 'bo');
+anime;
+%gen_video(env);
 

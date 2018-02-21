@@ -1,3 +1,4 @@
+% header file for env struct
 global TIME_STEP;
 global SIM_LENGTH;
 
@@ -7,6 +8,9 @@ global q;
 global q_init;
 global q_dim;
 global q_log;
+global u;
+global u_log;
+global u_dim;
 global targets_num;
 global targets; %targets is an array of targets object;
 % target{q_init, q, q_dim, u}

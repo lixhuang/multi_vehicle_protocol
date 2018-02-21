@@ -3,7 +3,7 @@ T=15;
 T_step=0.01;
 
 % x, y, theta, v
-q=[-3;1;0;3.1];
+q=[3;1;0;3.1];
 qd=[0;0;0;3]
 
 q_log=[];
@@ -47,7 +47,7 @@ for t=0:T_step:T
         u];
     dqd=[qd(4)*cos(qd(3));
           qd(4)*sin(qd(3));
-          -0.01;
+          -0.0;
           0];
     q=q+dq*T_step;
     qd=qd+dqd*T_step;

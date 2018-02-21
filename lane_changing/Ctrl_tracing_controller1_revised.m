@@ -1,4 +1,4 @@
-function env = tracing_controller1(q, sframe, env);
+function control = tracing_controller1(q, sframe);
     %designed for Simple_4state_model
     
     qd = sframe.targets(1).q;
@@ -25,6 +25,5 @@ function env = tracing_controller1(q, sframe, env);
     w = uw(2);
     
     control = [w;u];
-    env.u=control;
 end
 

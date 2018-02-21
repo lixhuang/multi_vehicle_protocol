@@ -1,9 +1,9 @@
-function Script_constant_targets(i)
+function env = Script_constant_targets(env, i)
 
-    Load_env;
+    %Load_env;
     
-    for k = 1 : targets_num
-        targets(k).u = targets(k).u;
+    for k = 1 : env.targets_num
+        env.targets(k).u = env.targets(k).u;
     end
 end
 
