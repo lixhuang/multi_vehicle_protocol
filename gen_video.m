@@ -16,7 +16,7 @@ function gen_video(env, mode)
     aviobj.FrameRate=30;
     open(aviobj);
 
-    hFig = figure;
+    hFig = figure('units','normalized','outerposition',[0 0 1 1]);
     set(hFig, 'Position', [200 50 800 800]);
     %drawnow;
     %xlim([-20,30]);
@@ -35,8 +35,10 @@ function gen_video(env, mode)
             draw_st_road(view_range);
             for k = 1:env.targets_num
                 draw_car_can(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
+                draw_circile_collision(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
             end
             draw_car_red(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
+            draw_circile_collision(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
         end
         
         if(strcmp(mode,'moving_fix'))
@@ -46,16 +48,20 @@ function gen_video(env, mode)
             draw_st_road(view_range);
             for k = 1:env.targets_num
                 draw_car_can(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
+                draw_circile_collision(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
             end
             draw_car_red(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
+            draw_circile_collision(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
         end
         
         if(strcmp(mode,'custom'))
             draw_st_road([1,300]);
             for k = 1:env.targets_num
                 draw_car_can(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
+                draw_circile_collision(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
             end
             draw_car_red(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
+            draw_circile_collision(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
         end
         
         drawnow;

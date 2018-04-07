@@ -1,7 +1,7 @@
 addpath('drawlib');
 figure;
 pile_size = 80;
-for n = 1:10:length(env.tspan)
+for n = 1:200:length(env.tspan)
     hold on;
     axis equal;
     

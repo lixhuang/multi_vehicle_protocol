@@ -4,7 +4,7 @@
     % repulsive funcrtion distance
     ob_sz = env.car_w;
     sep_min = env.min_sep;
-    sig_d = 3.7;
+    sig_d = 5.7;
     f = 0;
     sz = size(targets);
     
@@ -60,6 +60,7 @@
         dfyn = dfy/sqrt(fx^2+fy^2)-(fx*dfx+fy*dfy)*fy/(fx^2+fy^2)^(3/2);
         
         beta = ob_sz^2-sum(d_vec.^2);
+        dbeta = -2*x*dx-2*y*dy;
         beta_in = ob_sz^2-(ob_sz+sep_min+ob_sz)^2;
         beta_out = ob_sz^2-sig_d^2;
         if(beta>beta_in)
@@ -73,12 +74,17 @@
             3*beta_in^2,2*beta_in,1,0];
         coff = cof_mat^-1*[1;0;0;0];
         sigma = [beta^3,beta^2,beta,1]*coff;
-        dsigma = [3*beta^2,2*beta,1,0]*coff;
+        dsigma = [3*beta^2,2*beta,1,0]*coff*dbeta;
     end
     fxa = -xbar;
     fya = -ybar;
+    if(ybar==0)
+        fxa = 0;
+        fya = 0; 
+    end
     dfxa = -dxbar;
     dfya = -dybar;
+    
     
     fxan = fxa/sqrt(fxa^2+fya^2);
     fyan = fya/sqrt(fxa^2+fya^2);

@@ -60,6 +60,15 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env)
     end
     thetabar_d=Ka*wrapToPi(thetabar-theta_ref)+theta_ref_d+delta;
     
+    r_converg_const = xbar*cos(thetabar)+ybar*sin(thetabar);
+    if(vbar > 0.001)
+        vbar_d2 = min(-r_converg_const, vbar_d);
+        if (vbar_d2 ~= vbar_d)
+            asdasd = 1;
+        end
+        vbar_d = vbar_d2;
+    end
+    
     %% transfer back control
     a11 = xbar_d*sin(q(3))-ybar_d*cos(q(3));
     a12 = q(4)*sin(q(3))*ybar_d + q(4)*cos(q(3))*xbar_d;
