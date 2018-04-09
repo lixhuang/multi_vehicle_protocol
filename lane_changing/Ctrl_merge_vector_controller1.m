@@ -1,7 +1,11 @@
-function env = Ctrl_merge_vector_controller1(q, sframe, env)
+function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
+    if(nargin==3)
+        simple_flag = 0;
+    end
     %% TODO: change circular to ellipse and add environment set up for collision model
     env.car_w = 2.4/2;
     env.min_sep = 0.5;
+    env.blend_width = 5.7-0.5-2.4;
     %% extract environment
     d_min = 2*env.car_w + env.min_sep;
 
@@ -81,6 +85,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env)
     
     control = [w;u];
     env.u=control;
+    if(simple_)
     if(env.i == 1)
         env.thetabar_error_log = zeros([1,length(env.tspan)]);
         env.thetabar_error_log(env.i) = thetabar-theta_ref;

@@ -5,6 +5,9 @@
     ob_sz = env.car_w;
     sep_min = env.min_sep;
     sig_d = 5.7;
+    dm = 2*ob_sz;
+    dr = dm+sep_min;
+    ds = dr+env.blend_width;
     f = 0;
     sz = size(targets);
     
@@ -61,7 +64,7 @@
         
         beta = ob_sz^2-sum(d_vec.^2);
         dbeta = -2*x*dx-2*y*dy;
-        beta_in = ob_sz^2-(ob_sz+sep_min+ob_sz)^2;
+        beta_in = ob_sz^2-dr^2;
         beta_out = ob_sz^2-sig_d^2;
         if(beta>beta_in)
             vec = [0;0];
