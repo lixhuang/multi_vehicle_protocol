@@ -1,9 +1,9 @@
-function env = merge1
+function env = smpc_merge1
     
     %Load_env;
     
-    env.TIME_STEP = 0.01;
-    env.SIM_LENGTH = 30;
+    env.TIME_STEP = 0.1;
+    env.SIM_LENGTH = 10;
     env.tspan = 0;
     
     % for Simple_4states_model
@@ -32,7 +32,7 @@ function env = merge1
     env.targets(2).q_dim = length(env.targets(2).q);
     
     %setup methods
-    env.Controller = @Ctrl_merge_vector_controller1; %controller function;
+    env.Controller = @Ctrl_smpc_vector_controller1; %controller function;
     env.Ego_dynam = @Model_simple_4states_model; %dynamics function;
     env.Target_dynam = @Model_simple_4states_model;; %dynamics function;
     env.Sensing = @Sens_deterministic_simple; %sensing function

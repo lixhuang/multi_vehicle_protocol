@@ -8,11 +8,9 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     
     
     %% TODO: change circular to ellipse and add environment set up for collision model
-    env.car_w = 2.4/2;
-    env.min_sep = 0.5;
-    env.blend_width = 5.7-0.5-2.4;
+    
     %% extract environment
-    d_min = 2*env.car_w + env.min_sep;
+    d_min = 2*env.model_param.car_w + env.model_param.min_sep;
 
     %% calculate qd and most risky target
     risk_targ_id = 1;

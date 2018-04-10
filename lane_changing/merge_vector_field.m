@@ -2,12 +2,12 @@
     % work for circular object
     % q = [x, y, theta, v]
     % repulsive funcrtion distance
-    ob_sz = env.car_w;
-    sep_min = env.min_sep;
+    ob_sz = env.model_param.car_w;
+    sep_min = env.model_param.min_sep;
     sig_d = 5.7;
     dm = 2*ob_sz;
     dr = dm+sep_min;
-    ds = dr+env.blend_width;
+    ds = dr+env.model_param.blend_width;
     f = 0;
     sz = size(targets);
     
