@@ -20,7 +20,7 @@ function env = smpc_merge1
     env.model_param.car_w = 2.4/2;
     env.model_param.min_sep = 0.5;
     env.model_param.blend_width = 5.7-0.5-2.4;
-    env.model_param.l = 2.4/2;
+    env.model_param.l = 4.5;
     
     %setup targets
     env.targets_num = 2;
@@ -35,7 +35,7 @@ function env = smpc_merge1
     
     %setup methods
     env.Controller = @Ctrl_smpc_vector_controller1; %controller function;
-    env.Ego_dynam = @Model_simple_4states_model; %dynamics function;
+    env.Ego_dynam = @Model_nonholonomic_car_model; %dynamics function;
     env.Target_dynam = @Model_simple_4states_model;; %dynamics function;
     env.Sensing = @Sens_deterministic_simple; %sensing function
     env.Target_ctrl = @Script_constant_targets; %target script function;

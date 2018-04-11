@@ -85,9 +85,9 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     A = [a11, a12; a21, a22];
     uw = A^(-1)*[thetabar_d*(xbar_d^2+ybar_d^2); vbar*vbar_d];
     u = uw(1);
-    w = uw(2);
+    beta = atan(uw(2)*env.model_param.l/q(4));
     
-    control = [w;u];
+    control = [beta;u];
     env.u=control;
     if(simple_flag)
         return;

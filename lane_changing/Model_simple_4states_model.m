@@ -1,4 +1,4 @@
-function q_derivative = Model_simple_4states_model(state,u)
+function q_derivative = Model_simple_4states_model(state,u,param)
 
 % q = [x; y; theta; v];
 % u = [w; u]

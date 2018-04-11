@@ -23,10 +23,10 @@ for i = 1:length(env.tspan)
     end
     
     %% system envolve
-    env.q = env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
+    env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
     for k = 1:env.targets_num
         env.targets(k).q = env.targets(k).q + .....
-            env.Target_dynam(env.targets(k).q, env.targets(k).u)*env.TIME_STEP;
+            env.Target_dynam(env.targets(k).q, env.targets(k).u,env.model_param)*env.TIME_STEP;
     end
 end
 

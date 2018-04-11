@@ -21,8 +21,8 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         virtual_env.ref_blocking = 30;
         virtual_env.u1_max = pi/6;
         virtual_env.u1_min = -pi/6;
-        virtual_env.u2_max = 6;
-        virtual_env.u2_min = -6;
+        virtual_env.u2_max = 100;
+        virtual_env.u2_min = -100;
         virtual_env.v_max = 1000;
         virtual_env.d_min = 4;
         virtual_env.d_sep = 8;
@@ -61,6 +61,11 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         
         virtual_env.case_prob = weighted_m(end-virtual_env.case_num:end,1);
         virtual_env.case_list = weighted_m(end-virtual_env.case_num:end,2:end);
+        
+        virtual_env.case_num = 1;
+        virtual_env.case_prob = [1];
+        virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
+        
         qd = (sframe.targets(1).q+sframe.targets(2).q)/2;
 
         %% optimize
