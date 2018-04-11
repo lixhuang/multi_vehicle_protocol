@@ -31,9 +31,36 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         virtual_env.u_log = zeros([env.u_dim,virtual_env.p_horizon]);
 
         %% transition matrix update
-        virtual_env.case_num = 1;
-        virtual_env.case_blocking = 30;
-        virtual_env.case_prob=[1];
+        virtual_env.case_num = 5;
+        virtual_env.case_blocking = 10;
+        
+        state = zeros(1,length(sframe.targets));
+        for k = 1:length(sframe.targets)
+            state(k) = get_velocity_class(sframe.targets(k).q(4));
+        end
+        
+        TM = [0.05,0.2,0.7;
+            0.15,0.6,0.2;
+            0.8,0.2,0.1];
+        params.T = zeros(9);
+        for i = 1:3
+            for j = 1:3
+                for s = 1:3
+                    for t = 1:3
+                        params.T(i*3+j-3,s*3+t-3)=TM(i,j)*TM(s,t);
+                    end
+                end
+            end
+        end
+        params.T_initial_condition = state(1)*3+state(2)+1;    % range: [1, size(T,1)]
+        params.horizon_total = virtual_env.p_horizon+virtual_env.case_blocking;
+        params.block_num = virtual_env.case_blocking;
+        [T_list, prob_list] = getprob(params);
+        weighted_m = [prob_list,T_list(:,virtual_env.case_blocking+1:end)];
+        weighted_m = sortrows(weighted_m);
+        
+        virtual_env.case_prob = weighted_m(end-virtual_env.case_num:end,1);
+        virtual_env.case_list = weighted_m(end-virtual_env.case_num:end,2:end);
         qd = (sframe.targets(1).q+sframe.targets(2).q)/2;
 
         %% optimize

@@ -51,11 +51,14 @@ function [c,ceq] = smpc_constraints( qd, env )
             c(start_idx+9) = 1000*(d3+env.d_min);
             
             %% system envolve
+            state1 = (env.case_list(case_it,i)-1)/3;
+            state2 = mod(env.case_list(case_it,i)-1,3);
+            state = [state1;state2];
             env.qd = env.qd + env.Ego_dynam(env.qd, [0;0])*env.TIME_STEP;
             env.q = env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
             for k = 1:env.targets_num
                 env.targets(k).q = env.targets(k).q + .....
-                    env.Target_dynam(env.targets(k).q, env.targets(k).u)*env.TIME_STEP;
+                    env.Target_dynam(env.targets(k).q, [0;get_action(state(k))])*env.TIME_STEP;
             end
         end
         

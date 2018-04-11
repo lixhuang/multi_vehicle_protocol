@@ -1,6 +1,7 @@
 function env = smpc_merge1
     
     %Load_env;
+    addpath(strcat('lane_changing/','merge_markov'));
     
     env.TIME_STEP = 0.01;
     env.planning_blocking = 30;

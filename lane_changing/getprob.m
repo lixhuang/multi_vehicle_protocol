@@ -1,19 +1,19 @@
-clear, clc;
-
-%% parameters to be given
-params.T = [0.4 0.6;
-            0.2 0.8];
-
-params.T_initial_condition = 2;    % range: [1, size(T,1)]
-params.horizon_total = 11;
-params.block_num = 3;
-
-%% calculate  T_list, prob_list
-
-[T_list, prob_list] = getProb(params);
-
-T_list
-prob_list
+% clear, clc;
+% 
+% %% parameters to be given
+% params.T = [0.4 0.6;
+%             0.2 0.8];
+% 
+% params.T_initial_condition = 2;    % range: [1, size(T,1)]
+% params.horizon_total = 11;
+% params.block_num = 3;
+% 
+% %% calculate  T_list, prob_list
+% 
+% [T_list, prob_list] = getProb(params);
+% 
+% T_list
+% prob_list
 
 
 %% helper function
@@ -64,7 +64,7 @@ T_temp(1) = initial;
 for i = 1 : T_list_len
     % for each digit from backwards
     for j = horizon : -1 : 1
-        % 进位
+        % 进�?
         if T_temp(j) > T_size
             T_temp(j) = T_temp(j) - T_size;
             T_temp(j-1) = T_temp(j-1) + 1;

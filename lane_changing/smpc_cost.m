@@ -11,7 +11,7 @@ function J = smpc_cost( qd, env )
             end
             
             %% calculate control
-            sframe = env.Sensing(env);
+            sframe = env.Sensing(env); 
             env = env.Controller(env.q, sframe, env, 1);
             % TO DO: need to get target control from env!
             for k = 1 : env.targets_num
@@ -25,11 +25,14 @@ function J = smpc_cost( qd, env )
                 env.targets(k).q_log(:,i) = env.targets(k).q;
             end
             %% system envolve
+            state1 = (env.case_list(case_it,i)-1)/3;
+            state2 = mod(env.case_list(case_it,i)-1,3);
+            state = [state1;state2];
             env.qd = env.qd + env.Ego_dynam(env.qd, [0;0])*env.TIME_STEP;
             env.q = env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
             for k = 1:env.targets_num
                 env.targets(k).q = env.targets(k).q + .....
-                    env.Target_dynam(env.targets(k).q, env.targets(k).u)*env.TIME_STEP;
+                    env.Target_dynam(env.targets(k).q, [0;get_action(state(k))])*env.TIME_STEP;
             end
         end
         
