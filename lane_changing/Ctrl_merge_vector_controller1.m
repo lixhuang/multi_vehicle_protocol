@@ -2,8 +2,10 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     if(nargin==3)
         simple_flag = 0;
     end
+    
+    vbar_max = 3;
     %% get qd
-    %qd = (sframe.targets(1).q+sframe.targets(2).q)/2;
+    %qd = 0.2*sframe.targets(1).q+0.8*sframe.targets(2).q;
     qd = env.qd;
     
     
@@ -54,7 +56,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         targets = [targets, targetsbar(i).q];
     end
     % velocity control
-    vbar_d=1/(r+1)^2*cos(thetabar-phi)*vbar-4*(vbar-r/(r+1));
+    vbar_d=vbar_max*1/(r+5)^2*cos(thetabar-phi)*vbar-4*(vbar-vbar_max*r/(r+5));
     % angle control
     [vec_ref, theta_ref_d] = merge_vector_field(targets, [xbar; ybar; thetabar; vbar], env);
     theta_ref = atan2(vec_ref(2), vec_ref(1));

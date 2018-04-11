@@ -2,8 +2,9 @@ function env = smpc_merge1
     
     %Load_env;
     
-    env.TIME_STEP = 0.1;
-    env.SIM_LENGTH = 10;
+    env.TIME_STEP = 0.01;
+    env.planning_blocking = 30;
+    env.SIM_LENGTH = 15;
     env.tspan = 0;
     
     % for Simple_4states_model
@@ -22,7 +23,7 @@ function env = smpc_merge1
     
     %setup targets
     env.targets_num = 2;
-    env.targets(1).q_init = [-4;-3.7;0;30];
+    env.targets(1).q_init = [-10;-3.7;0;30];
     env.targets(1).q = env.targets(1).q_init;
     env.targets(1).u = [0;0];
     env.targets(1).q_dim = length(env.targets(1).q);

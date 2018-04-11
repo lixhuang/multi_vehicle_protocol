@@ -22,7 +22,7 @@ function env = merge1
     
     %setup targets
     env.targets_num = 2;
-    env.targets(1).q_init = [-4;-3.7;0;30];
+    env.targets(1).q_init = [-10;-3.7;0;30];
     env.targets(1).q = env.targets(1).q_init;
     env.targets(1).u = [0;0];
     env.targets(1).q_dim = length(env.targets(1).q);

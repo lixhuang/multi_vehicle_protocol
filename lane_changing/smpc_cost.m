@@ -6,7 +6,9 @@ function J = smpc_cost( qd, env )
     
     for case_it = 1:env.case_num
         for i = 1:N
-            env.qd = qd(:,floor((i-1)/ref_blocking)+1);
+            if(mod(i-1,ref_blocking)==0)
+                env.qd = qd(:,floor((i-1)/ref_blocking)+1);
+            end
             
             %% calculate control
             sframe = env.Sensing(env);
@@ -23,7 +25,8 @@ function J = smpc_cost( qd, env )
                 env.targets(k).q_log(:,i) = env.targets(k).q;
             end
             %% system envolve
-            env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
+            env.qd = env.qd + env.Ego_dynam(env.qd, [0;0])*env.TIME_STEP;
+            env.q = env.q + env.Ego_dynam(env.q, env.u)*env.TIME_STEP;
             for k = 1:env.targets_num
                 env.targets(k).q = env.targets(k).q + .....
                     env.Target_dynam(env.targets(k).q, env.targets(k).u)*env.TIME_STEP;
