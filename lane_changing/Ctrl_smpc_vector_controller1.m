@@ -66,11 +66,11 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         virtual_env.case_prob = weighted_m(end-virtual_env.case_num:end,1);
         virtual_env.case_list = weighted_m(end-virtual_env.case_num:end,2:end);
         
-        virtual_env.case_num = 1;
-        virtual_env.case_prob = [1];
-        virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
+        %virtual_env.case_num = 1;
+        %virtual_env.case_prob = [1];
+        %virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
         
-        qd = (sframe.targets(1).q+sframe.targets(2).q)/2;
+        qd = 0.3*sframe.targets(1).q+0.7*sframe.targets(2).q;
 
         %% optimize
         qd_opt = fmincon(@(x)smpc_cost(x,virtual_env), qd, [],[],[],[],[],[],.....
