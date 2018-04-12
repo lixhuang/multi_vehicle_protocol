@@ -29,6 +29,10 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
 
         virtual_env.q_log = zeros([env.q_dim,virtual_env.p_horizon]);
         virtual_env.u_log = zeros([env.u_dim,virtual_env.p_horizon]);
+         virtual_env.state_log = zeros([2,virtual_env.p_horizon]);
+        for k = 1:env.targets_num
+            virtual_env.targets(k).q_log = zeros([env.targets(k).q_dim,virtual_env.p_horizon]);
+        end
 
         %% transition matrix update
         virtual_env.case_num = 5;
@@ -74,6 +78,7 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         qd_opt(:,1)
         env.qd = qd_opt(:,1);
     end
+    
     
     %% calculate control
     

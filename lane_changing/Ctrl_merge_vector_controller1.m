@@ -49,6 +49,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     
     %% compute control in relative space
     Ka = -2;
+    Kv = -4;
     
     %prepare targets
     targets = [];
@@ -56,7 +57,11 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         targets = [targets, targetsbar(i).q];
     end
     % velocity control
-    vbar_d=vbar_max*1/(r+5)^2*cos(thetabar-phi)*vbar-4*(vbar-vbar_max*r/(r+5));
+    % first fdesign
+    %vbar_d=vbar_max*1/(r+5)^2*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*r/(r+5));
+    %second design
+    eps=0.3;
+    vbar_d=vbar_max*2*eps/(1+exp(-eps*r))^2*exp(-eps*r)*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*(2/(1+exp(-eps*r))-1));
     % angle control
     [vec_ref, theta_ref_d] = merge_vector_field(targets, [xbar; ybar; thetabar; vbar], env);
     theta_ref = atan2(vec_ref(2), vec_ref(1));
@@ -89,6 +94,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     
     control = [beta;u];
     env.u=control;
+    env.qd = env.qd + env.Ego_dynam(env.qd, [0;0], env.model_param)*env.TIME_STEP;
     if(simple_flag)
         return;
     end
@@ -109,6 +115,12 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         env.derror_log(env.i) = r;
     else
         env.derror_log(env.i) = r;
+    end
+    if(env.i == 1)
+        env.qd_log = zeros([4,length(env.tspan)]);
+        env.qd_log(:,env.i) = env.qd;
+    else
+        env.qd_log(:,env.i) = env.qd;
     end
 end
 

@@ -32,6 +32,6 @@ end
 
 %profile viewer;
 
-anime;
+%anime;
 %gen_video(env,'tracking');
 
