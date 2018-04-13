@@ -5,8 +5,12 @@ function [c,ceq] = smpc_constraints( qd, env )
     cons_dim_t = N*cons_dim;
     
     c = zeros(cons_dim*env.case_num,1);
+    temp_q = env.q;
+    temp_targs = env.targets;
     
     for case_it = 1:env.case_num
+        env.q = temp_q;
+        env.targets = temp_targs;
         for i = 1:N
             if(mod(i-1,ref_blocking)==0)
                 env.qd = qd(:,floor((i-1)/ref_blocking)+1);
@@ -51,7 +55,7 @@ function [c,ceq] = smpc_constraints( qd, env )
             c(start_idx+9) = 1000*(d3+env.d_min);
             
             %% system envolve
-            state1 = (env.case_list(case_it,i)-1)/3;
+            state1 = floor((env.case_list(case_it,i)-1)/3);
             state2 = mod(env.case_list(case_it,i)-1,3);
             state = [state1;state2];
             %env.qd = env.qd + env.Ego_dynam(env.qd, [0;0], env.model_param)*env.TIME_STEP;

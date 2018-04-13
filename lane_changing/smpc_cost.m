@@ -3,8 +3,12 @@ function J = smpc_cost( qd, env )
     ref_blocking = env.ref_blocking;
     
     J = 0;
+    temp_q = env.q;
+    temp_targs = env.targets;
     
     for case_it = 1:env.case_num
+        env.q = temp_q;
+        env.targets = temp_targs;
         for i = 1:N
             if(mod(i-1,ref_blocking)==0)
                 env.qd = qd(:,floor((i-1)/ref_blocking)+1);
@@ -19,18 +23,18 @@ function J = smpc_cost( qd, env )
             end
             
             %% system record
-            env.q_log(:,i) = env.q;
-            env.u_log(:,i) = env.u;
-            for k = 1:env.targets_num
-                env.targets(k).q_log(:,i) = env.targets(k).q;
-            end
+%             env.q_log(:,i) = env.q;
+%             env.u_log(:,i) = env.u;
+%             for k = 1:env.targets_num
+%                 env.targets(k).q_log(:,i) = env.targets(k).q;
+%             end
             
             %% system envolve
             state1 = floor((env.case_list(case_it,i)-1)/3);
             state2 = mod(env.case_list(case_it,i)-1,3);
             state = [state1;state2];
             
-            env.state_log(:,i) = state;
+            %env.state_log(:,i) = state;
             
             %env.qd = env.qd + env.Ego_dynam(env.qd, [0;0], env.model_param)*env.TIME_STEP;
             env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
