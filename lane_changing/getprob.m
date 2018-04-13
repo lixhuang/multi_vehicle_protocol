@@ -1,19 +1,18 @@
 % clear, clc;
 % 
 % %% parameters to be given
-% params.T = [0.4 0.6;
-%             0.2 0.8];
+% params.T(:,:,1) = [0.4 0.6;
+%                    0.2 0.8];
+% params.T(:,:,2) = [0.4 0.6;
+%                    0.2 0.8];        % T（i, j，k） is the prob from [T_i, T_j] to T_k;            
 % 
-% params.T_initial_condition = 2;    % range: [1, size(T,1)]
-% params.horizon_total = 11;
+% params.T_initial_condition = [1 2]; % range of each number: [1, size(T,1)]
+% params.horizon_total = 14;
 % params.block_num = 3;
-% 
-% %% calculate  T_list, prob_list
-% 
-% [T_list, prob_list] = getProb(params);
-% 
-% T_list
-% prob_list
+
+%% calculate  T_list, prob_list
+
+[T_list, prob_list] = getProb(params);
 
 
 %% helper function
@@ -35,8 +34,8 @@ horizon_last = horizon_total - (horizon - 1)*block_num;
 % get probability for T_list_uni
 prob_list = ones(T_list_len,1);
 for i = 1:T_list_len
-    for j = 2:horizon
-        prob_list(i) = prob_list(i) * T(T_list_uni(i,j - 1), T_list_uni(i,j));
+    for j = 3:horizon
+        prob_list(i) = prob_list(i) * T(T_list_uni(i,j - 2), T_list_uni(i,j - 1), T_list_uni(i,j));
     end
 end
 
@@ -55,16 +54,16 @@ end
 
 function [T_list_uni, T_list_len] = getlist(initial, T_size, horizon)
 
-T_list_len = T_size^(horizon - 1);
+T_list_len = T_size^(horizon - 2);
 T_list_uni = zeros(T_list_len, horizon);
 T_temp = ones(1, horizon);
-T_temp(1) = initial;
+T_temp([1 2]) = initial;
 
 % for each possibility
 for i = 1 : T_list_len
     % for each digit from backwards
     for j = horizon : -1 : 1
-        % 进�?
+        % 进位
         if T_temp(j) > T_size
             T_temp(j) = T_temp(j) - T_size;
             T_temp(j-1) = T_temp(j-1) + 1;
