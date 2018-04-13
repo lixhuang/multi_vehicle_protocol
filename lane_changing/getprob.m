@@ -12,7 +12,7 @@
 
 %% calculate  T_list, prob_list
 
-[T_list, prob_list] = getProb(params);
+%[T_list, prob_list] = getProb(params);
 
 
 %% helper function
@@ -63,7 +63,7 @@ T_temp([1 2]) = initial;
 for i = 1 : T_list_len
     % for each digit from backwards
     for j = horizon : -1 : 1
-        % 进位
+        % 进�?
         if T_temp(j) > T_size
             T_temp(j) = T_temp(j) - T_size;
             T_temp(j-1) = T_temp(j-1) + 1;

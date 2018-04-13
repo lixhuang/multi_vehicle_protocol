@@ -20,6 +20,7 @@ for i = 1:length(env.tspan)
     env.u_log(:,i) = env.u;
     for k = 1:env.targets_num
         env.targets(k).q_log(:,i) = env.targets(k).q;
+        env.targets(k).u_log(:,i) = env.targets(k).u;
     end
     
     %% system envolve

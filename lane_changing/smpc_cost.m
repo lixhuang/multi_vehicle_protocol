@@ -36,7 +36,6 @@ function J = smpc_cost( qd, env )
             
             %env.state_log(:,i) = state;
             
-            %env.qd = env.qd + env.Ego_dynam(env.qd, [0;0], env.model_param)*env.TIME_STEP;
             env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
             for k = 1:env.targets_num
                 env.targets(k).q = env.targets(k).q + .....
@@ -46,9 +45,9 @@ function J = smpc_cost( qd, env )
         
         J = J + env.case_prob(case_it)*sum(sum(env.u_log.^2));
         
-        %hold on
-        %plot(env.targets(1).q_log(1,:));
-        %plot(env.targets(2).q_log(1,:));
+%         hold on
+%         plot(env.targets(1).q_log(1,:));
+%         plot(env.targets(2).q_log(1,:));
     end
 
 

@@ -16,7 +16,17 @@ function [c,ceq] = smpc_constraints( qd, env )
                 env.qd = qd(:,floor((i-1)/ref_blocking)+1);
             end
             
-            %% calculate control
+            %% caluclate constraint on current qd
+            start_idx = (case_it-1)*cons_dim_t+(i-1)*cons_dim;
+            v1 = env.qd(1:2) - env.targets(1).q(1:2);
+            d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
+            c(start_idx+8) = 1000*(-d2+env.d_sep);
+
+            v2 = env.qd(1:2) - env.targets(2).q(1:2);
+            d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
+            c(start_idx+9) = 1000*(d3+env.d_min);
+          
+            %% calculate control (would envolve qd)
             sframe = env.Sensing(env);
             env = env.Controller(env.q, sframe, env, 1);
             % need to get target control from env
@@ -33,7 +43,7 @@ function [c,ceq] = smpc_constraints( qd, env )
             
             %% calculate constraits
             %u v d
-            start_idx = (case_it-1)*cons_dim_t+(i-1)*cons_dim;
+           
             c(start_idx+1) = env.u(1)-env.u1_max;
             c(start_idx+2) = -env.u(1)+env.u1_min;
             c(start_idx+3) = env.u(2)-env.u2_max;
@@ -46,13 +56,7 @@ function [c,ceq] = smpc_constraints( qd, env )
                 c(start_idx+5+k) = -d+env.d_min;
                 %c(start_idx+5+k) = -10;
             end 
-            v1 = env.qd(1:2) - env.targets(1).q(1:2);
-            d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
-            c(start_idx+8) = 1000*(-d2+env.d_sep);
-
-            v2 = env.qd(1:2) - env.targets(2).q(1:2);
-            d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
-            c(start_idx+9) = 1000*(d3+env.d_min);
+            
             
             %% system envolve
             state1 = floor((env.case_list(case_it,i)-1)/3);
