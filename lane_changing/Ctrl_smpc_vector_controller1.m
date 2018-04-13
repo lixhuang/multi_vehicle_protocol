@@ -2,13 +2,23 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
      
     if(mod(env.i-1,env.planning_blocking)==0)
         env.i
+        b_target = env.targets[1];
+        b_target.valid = 0;
+        for it = 1 : env.targets_num+1
         %% prepare environment
         virtual_env.q = q;
         virtual_env.q_dim = env.q_dim;
         virtual_env.u_dim = env.u_dim;
-        virtual_env.targets_num = sframe.targets_num;
-        virtual_env.targets = sframe.targets;
-
+        %virtual_env.targets_num = sframe.targets_num;
+        virtual_env.targets_num = 2;
+        if(it > env.targets_num)
+            virtual_env.targets = [b_target;env.targets[1]];
+            virtual_env.targets(2).valid = 0;
+        else
+            virtual_env.targets = [b_target;env.targets(it)];
+            virtual_env.targets(2).valid = 1;
+            b_target = virtual_env.targets(2)
+        end
         virtual_env.model_param = env.model_param;
 
         virtual_env.Controller = @Ctrl_merge_vector_controller1;
@@ -66,9 +76,9 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         virtual_env.case_prob = weighted_m(end-virtual_env.case_num:end,1);
         virtual_env.case_list = weighted_m(end-virtual_env.case_num:end,2:end);
         
-        %virtual_env.case_num = 1;
-        %virtual_env.case_prob = [1];
-        %virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
+        virtual_env.case_num = 1;
+        virtual_env.case_prob = [1];
+        virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
         
         qd = 0.3*sframe.targets(1).q+0.7*sframe.targets(2).q;
 

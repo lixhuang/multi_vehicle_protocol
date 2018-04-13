@@ -10,7 +10,7 @@ function env = smpc_merge1
     
     % for Simple_4states_model
     % x; y; theta; v
-    env.q_init = [-14;0;0;31];
+    env.q_init = [16;0;0;31];
     env.q = env.q_init;
     env.u = [0;0];
     env.q_dim = length(env.q_init);
