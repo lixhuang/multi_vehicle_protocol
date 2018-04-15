@@ -8,8 +8,8 @@ env = Setup('lane_changing',@smpc_merge1); %load initial settings
 
 for i = 1:length(env.tspan)
     %% generate sensor frame
-    sframe = env.Sensing(env);
     env.i = i;
+    sframe = env.Sensing(env);
     
     %% calculate control
     env = env.Controller(env.q, sframe, env);

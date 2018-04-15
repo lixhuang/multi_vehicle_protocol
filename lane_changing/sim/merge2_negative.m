@@ -8,7 +8,10 @@ function env = merge1
     
     % for Simple_4states_model
     % x; y; theta; v
-    env.q_init = [-15;0;0;29];
+    env.q_init = [22.7378584027640;
+        -0.368355227189024;
+        -0.0205807506130510;
+        32.3396081758055];
     env.q = env.q_init;
     env.u = [0;0];
     env.q_dim = length(env.q_init);
@@ -22,12 +25,12 @@ function env = merge1
     
     %setup targets
     env.targets_num = 2;
-    env.targets(1).q_init = [-10;-3.7;0;30];
+    env.targets(1).q_init = [26;-3.7;0;30];
     env.targets(1).q = env.targets(1).q_init;
     env.targets(1).u = [0;0];
     env.targets(1).q_dim = length(env.targets(1).q);
     env.targets(1).u_dim = length(env.targets(1).u);
-    env.targets(2).q_init = [12;-3.7;0;30];
+    env.targets(2).q_init = [48;-3.7;0;30];
     env.targets(2).q = env.targets(2).q_init;
     env.targets(2).u = [0;0];
     env.targets(2).q_dim = length(env.targets(2).q);

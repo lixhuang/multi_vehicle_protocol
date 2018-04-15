@@ -40,7 +40,7 @@ function J = smpc_cost( qd, env )
             
             env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
             for k = 1:env.targets_num
-                if(targets(k).valid)
+                if(env.targets(k).valid)
                     env.targets(k).q = env.targets(k).q + .....
                         env.Target_dynam(env.targets(k).q, [0;get_action(state(k))], env.model_param)*env.TIME_STEP;
                 end

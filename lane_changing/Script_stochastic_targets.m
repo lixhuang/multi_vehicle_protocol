@@ -3,22 +3,32 @@ function env = Script_stochastic_targets(env, i)
     %REQUIRE: only three choice for target vehicle: -1, 0, 1
     %EFFECTS: model targets car to be stochastic
     %MODIFIES: env.targets(k).u which is [steering angle; acc]
-  
-    for k = 1 : env.targets_num
-        if(i == 1)
-            %set initial value
-            prob =[0.5, 0.25, 0.25;
-                  0.25, 0.5, 0.25;
-                  0.25, 0.25, 0.5];
-            env.targets(k).u = [0;-1];
-        else
-            %probability update
-            prob = prob*prob;
-            state_last = env.targets(k).u[2] + 2;
-            val = [-1 0 1];
-            P = prob(state_last,:);
-            env.targets(k).u = [0;val_select(P,val)];              
-        end        
+    markov_freq = 15*(0.1/0.01);
+    if(mod(i, markov_freq)==0)
+        
+        for k = 1 : env.targets_num
+            if(i == 1)
+                %set initial value                
+                env.targets(k).u = [0;0];
+            else
+                %probability update
+                
+                if(i < markov_freq+1)
+                    state_last = get_control_class(env.targets(k).u);
+                else
+                    state_last = get_control_class(env.targets(k).u_log(:,i-1-markov_freq));
+                end
+                if(i < 2*markov_freq+1)
+                    state_last2 = get_control_class(env.targets(k).u);
+                else
+                    state_last2 = get_control_class(env.targets(k).u_log(:,i-1-2*markov_freq));
+                end
+                
+                val = [-1 0 1];
+                P = reshape(env.TM(state_last,state_last2,:),[],2);
+                env.targets(k).u = [0;val_select(P,val)];              
+            end        
+        end
     end
 end
 

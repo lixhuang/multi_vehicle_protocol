@@ -18,10 +18,14 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             else
                 virtual_env.targets = [b_target;env.targets(it)];
                 virtual_env.targets(2).valid = 1;
-                b_target = virtual_env.targets(2)
+                b_target = virtual_env.targets(2);
             end
             virtual_env.model_param = env.model_param;
-
+            
+            if(it ~= 2)
+                continue;
+            end
+            
             virtual_env.Controller = @Ctrl_merge_vector_controller1;
             virtual_env.Sensing = @Sens_deterministic_simple;
             virtual_env.Ego_dynam = env.Ego_dynam;
@@ -35,7 +39,7 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.u2_max = 100;
             virtual_env.u2_min = -100;
             virtual_env.v_max = 1000;
-            virtual_env.d_min = 4;
+            virtual_env.d_min = 2.9;
             virtual_env.d_sep = 8;
 
             virtual_env.q_log = zeros([env.q_dim,virtual_env.p_horizon]);
@@ -49,22 +53,14 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.case_num = 5;
             virtual_env.case_blocking = 15;
 
-            state = zeros(1,length(sframe.targets));
+            state1 = zeros(1,length(sframe.targets));
+            state2 = zeros(1,length(sframe.targets));
             for k = 1:length(sframe.targets)
-                state(k) = get_control_class(sframe.targets(k).last_u);
+                state1(k) = get_control_class(sframe.targets(k).last_u);
+                state2(k) = get_control_class(sframe.targets(k).last2_u);
             end
 
-            TM(:,:,1) = [0.1,0.15,0.15;
-                        0.5,0.1,0.1;
-                        0.25,0.15,0.2];
-
-            TM(:,:,2) = [0.7,0.7,0.6;
-                        0.4,0.8,0.4;
-                        0.6,0.7,0.7];
-
-            TM(:,:,3) = [0.2,0.15,0.25;
-                        0.1,0.1,0.5;
-                        0.15,0.15,0.1];
+            
 
             params.T = zeros(9,9,9);
             for i_1 = 1:3
@@ -74,14 +70,14 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
                             for j_2 = 1:3
                                 for j_3 = 1:3
                                     params.T((i_1-1)*3 + j_1, (i_2-1)*3 + j_2, (i_3-1)*3 + j_3) = ...
-                                        TM(i_1,i_2,i_3)*TM(j_1,j_2,j_3);
+                                        env.TM(i_1,i_2,i_3)*env.TM(j_1,j_2,j_3);
                                 end
                             end
                         end
                     end
                 end
             end
-            params.T_initial_condition = [state(1)*3+state(2)+1,  state(1)*3+state(2)+1];    % range: [1, size(T,1)]
+            params.T_initial_condition = [state2(1)*3+state2(2)+1,  state1(1)*3+state1(2)+1];    % range: [1, size(T,1)]
             params.horizon_total = virtual_env.p_horizon+2*virtual_env.case_blocking;
             params.block_num = virtual_env.case_blocking;
             [T_list, prob_list] = getprob(params);

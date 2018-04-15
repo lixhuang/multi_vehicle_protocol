@@ -36,13 +36,27 @@ function env = smpc_merge1
     env.targets(2).q_dim = length(env.targets(2).q);
     env.targets(2).u_dim = length(env.targets(2).u);
     env.targets(2).valid = 1;
-    
+        
+    %Transition model
+    env.TM(:,:,1) = [0.1,0.15,0.15;
+                0.5,0.1,0.1;
+                0.25,0.15,0.2];
+
+    env.TM(:,:,2) = [0.7,0.7,0.6;
+                0.4,0.8,0.4;
+                0.6,0.7,0.7];
+
+    env.TM(:,:,3) = [0.2,0.15,0.25;
+                0.1,0.1,0.5;
+                0.15,0.15,0.1];
+            
+            
     %setup methods
     env.Controller = @Ctrl_smpc_vector_controller1; %controller function;
     env.Ego_dynam = @Model_nonholonomic_car_model; %dynamics function;
     env.Target_dynam = @Model_simple_4states_model; %dynamics function;
     env.Sensing = @Sens_record_markov_state; %sensing function
-    env.Target_ctrl = @Script_constant_targets; %target script function;
+    env.Target_ctrl = @Script_stochastic_targets; %target script function;
 
 end
 
