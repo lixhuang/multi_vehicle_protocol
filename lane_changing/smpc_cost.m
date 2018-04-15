@@ -19,7 +19,9 @@ function J = smpc_cost( qd, env )
             env = env.Controller(env.q, sframe, env, 1);
             % TO DO: need to get target control from env!
             for k = 1 : env.targets_num
-                env.targets(k).u = env.targets(k).u;
+                if(env.targets(k).valid)
+                    env.targets(k).u = env.targets(k).u;
+                end
             end
             
             %% system record
@@ -38,8 +40,10 @@ function J = smpc_cost( qd, env )
             
             env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
             for k = 1:env.targets_num
-                env.targets(k).q = env.targets(k).q + .....
-                    env.Target_dynam(env.targets(k).q, [0;get_action(state(k))], env.model_param)*env.TIME_STEP;
+                if(targets(k).valid)
+                    env.targets(k).q = env.targets(k).q + .....
+                        env.Target_dynam(env.targets(k).q, [0;get_action(state(k))], env.model_param)*env.TIME_STEP;
+                end
             end
         end
         

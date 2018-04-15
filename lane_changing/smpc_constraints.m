@@ -18,20 +18,30 @@ function [c,ceq] = smpc_constraints( qd, env )
             
             %% caluclate constraint on current qd
             start_idx = (case_it-1)*cons_dim_t+(i-1)*cons_dim;
-            v1 = env.qd(1:2) - env.targets(1).q(1:2);
-            d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
-            c(start_idx+8) = 1000*(-d2+env.d_sep);
-
-            v2 = env.qd(1:2) - env.targets(2).q(1:2);
-            d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
-            c(start_idx+9) = 1000*(d3+env.d_sep);
-          
+            if(env.targets(1).valid)
+                v1 = env.qd(1:2) - env.targets(1).q(1:2);
+                d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
+                c(start_idx+8) = 1000*(-d2+env.d_sep);
+            else
+                c(start_idx+8) = -10;
+            end
+            
+            if(env.targets(2).valid)
+                v2 = env.qd(1:2) - env.targets(2).q(1:2);
+                d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
+                c(start_idx+9) = 1000*(d3+env.d_sep);
+            else
+                c(start_idx+9) = -10;
+            end
+            
             %% calculate control (would envolve qd)
             sframe = env.Sensing(env);
             env = env.Controller(env.q, sframe, env, 1);
             % need to get target control from env
             for k = 1 : env.targets_num
-                env.targets(k).u = env.targets(k).u;
+                if(env.targets(k).valid)
+                    env.targets(k).u = env.targets(k).u;
+                end
             end
             
             %% system record
@@ -52,8 +62,12 @@ function [c,ceq] = smpc_constraints( qd, env )
             %c(start_idx+5) = env.q(4)-env.v_max;
             c(start_idx+5) = -10;
             for k = 1:env.targets_num
-                d = sqrt(sum((env.targets(k).q(1:2) - env.q(1:2)).^2));
-                c(start_idx+5+k) = -d+env.d_min;
+                if(env.targets(k).valid)
+                    d = sqrt(sum((env.targets(k).q(1:2) - env.q(1:2)).^2));
+                    c(start_idx+5+k) = -d+env.d_min;
+                else
+                    c(start_idx+5+k) = -10;
+                end
                 %c(start_idx+5+k) = -10;
             end 
             
@@ -65,8 +79,10 @@ function [c,ceq] = smpc_constraints( qd, env )
             %env.qd = env.qd + env.Ego_dynam(env.qd, [0;0], env.model_param)*env.TIME_STEP;
             env.q = env.q + env.Ego_dynam(env.q, env.u, env.model_param)*env.TIME_STEP;
             for k = 1:env.targets_num
-                env.targets(k).q = env.targets(k).q + .....
-                    env.Target_dynam(env.targets(k).q, [0;get_action(state(k))], env.model_param)*env.TIME_STEP;
+                if(env.targets(k).valid)
+                    env.targets(k).q = env.targets(k).q + .....
+                        env.Target_dynam(env.targets(k).q, [0;get_action(state(k))], env.model_param)*env.TIME_STEP;
+                end
             end
         end
         
