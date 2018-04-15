@@ -5,7 +5,7 @@ function env = smpc_merge1
     
     env.TIME_STEP = 0.01;
     env.planning_blocking = 30;
-    env.SIM_LENGTH = 15;
+    env.SIM_LENGTH = 15; 
     env.tspan = 0;
     
     % for Simple_4states_model

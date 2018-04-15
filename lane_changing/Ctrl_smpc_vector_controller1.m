@@ -9,17 +9,17 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         virtual_env.q = q;
         virtual_env.q_dim = env.q_dim;
         virtual_env.u_dim = env.u_dim;
-        virtual_env.targets_num = sframe.targets_num;
-        virtual_env.targets = sframe.targets;
-%         virtual_env.targets_num = 2;
-%         if(it > env.targets_num)
-%             virtual_env.targets = [b_target;env.targets[1]];
-%             virtual_env.targets(2).valid = 0;
-%         else
-%             virtual_env.targets = [b_target;env.targets(it)];
-%             virtual_env.targets(2).valid = 1;
-%             b_target = virtual_env.targets(2)
-%         end
+        %virtual_env.targets_num = sframe.targets_num;
+        %virtual_env.targets = sframe.targets;
+        virtual_env.targets_num = 2;
+        if(it > env.targets_num)
+            virtual_env.targets = [b_target;env.targets(1)];
+            virtual_env.targets(2).valid = 0;
+        else
+            virtual_env.targets = [b_target;env.targets(it)];
+            virtual_env.targets(2).valid = 1;
+            b_target = virtual_env.targets(2)
+        end
         virtual_env.model_param = env.model_param;
 
         virtual_env.Controller = @Ctrl_merge_vector_controller1;

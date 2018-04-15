@@ -24,7 +24,7 @@ function [c,ceq] = smpc_constraints( qd, env )
 
             v2 = env.qd(1:2) - env.targets(2).q(1:2);
             d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
-            c(start_idx+9) = 1000*(d3+env.d_min);
+            c(start_idx+9) = 1000*(d3+env.d_sep);
           
             %% calculate control (would envolve qd)
             sframe = env.Sensing(env);
