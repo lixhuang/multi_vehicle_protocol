@@ -15,7 +15,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     d_min = 2*env.model_param.car_w + env.model_param.min_sep;
 
     %% calculate qd and most risky target
-    risk_trag_id = 1;
+    risk_targ_id = 1;
     risk_time = Inf;
     for k = 1:env.targets_num
         temp_distance = sqrt(sum((env.targets(k).q(1:2)-q(1:2)).^2));
