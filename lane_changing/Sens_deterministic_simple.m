@@ -5,6 +5,7 @@ function sframes = Sens_deterministic_simple(env)
     for k = 1:env.targets_num
         sframes.targets(k).q = env.targets(k).q;
         sframes.targets(k).u = env.targets(k).u;
+        sframes.targets(k).valid = env.targets(k).valid;
     end
     sframes.env = [];
 end

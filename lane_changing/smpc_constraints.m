@@ -37,12 +37,6 @@ function [c,ceq] = smpc_constraints( qd, env )
             %% calculate control (would envolve qd)
             sframe = env.Sensing(env);
             env = env.Controller(env.q, sframe, env, 1);
-            % need to get target control from env
-            for k = 1 : env.targets_num
-                if(env.targets(k).valid)
-                    env.targets(k).u = env.targets(k).u;
-                end
-            end
             
             %% system record
 %             env.q_log(:,i) = env.q;

@@ -4,6 +4,8 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         env.i
         b_target = env.targets(1);
         b_target.valid = 0;
+        J_vec = Inf*ones([env.targets_num+1,1]);
+        qd_vec = zeros([env.q_dim,env.targets_num+1]);
         for it = 1 : env.targets_num+1
             %% prepare environment
             virtual_env.q = q;
@@ -21,10 +23,10 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
                 b_target = virtual_env.targets(2);
             end
             virtual_env.model_param = env.model_param;
-            
-            if(it ~= 2)
-                continue;
-            end
+%             
+%             if(it ~= 3)
+%                 continue;
+%             end
             
             virtual_env.Controller = @Ctrl_merge_vector_controller1;
             virtual_env.Sensing = @Sens_deterministic_simple;
@@ -90,25 +92,56 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
     %         virtual_env.case_num = 1;
     %         virtual_env.case_prob = [1];
     %         virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
-
+            if(virtual_env.targets(1).valid)
+                    qd = sframe.targets(1).q-[10;0;0;0];
+            end
+            if(virtual_env.targets(2).valid)
+                qd = sframe.targets(2).q+[10;0;0;0];
+            end
+            if(virtual_env.targets(1).valid && virtual_env.targets(2).valid)
+                qd = 0.5*sframe.targets(1).q+0.5*sframe.targets(2).q;
+            end
             if(env.i == 1)
-                qd = 0.3*sframe.targets(1).q+0.7*sframe.targets(2).q;
+                
             else
-                qd = env.qd;
+                %qd = env.qd;
+                qd2 = env.last_qd_vec(:,it);
+                [c,ceq] =  smpc_constraints(qd2, virtual_env);
+                if(~sum(c>0))
+                    qd = qd2;
+                end
             end
 
             %% optimize
-            qd_opt = fmincon(@(x)smpc_cost(x,virtual_env), qd, [],[],[],[],[],[],.....
+            % determine feasibility at first hand
+            if(~determine_feasibility(virtual_env))
+                J_vec(it) = Inf;               
+                continue;
+            end
+            % solve
+            [qd_opt,~,exitflag,~] = fmincon(@(x)smpc_cost(x,virtual_env), qd, [],[],[],[],[],[],.....
                 @(x)smpc_constraints(x,virtual_env));
-            qd_opt(:,1)
-            env.qd = qd_opt(:,1);
+            if(exitflag == -2)
+                asdasdsd = 1;
+            end
+            %qd_opt(:,1)
+            J_vec(it) = smpc_cost(qd_opt(:,1),virtual_env);
+            qd_vec(:,it) = qd_opt(:,1);
+            %env.qd = qd_opt(:,1);
         end
-        
+        comp_vec = [J_vec,qd_vec'];
+        comp_vec = sortrows(comp_vec);
+        env.qd = comp_vec(1,2:end)';
+        env.last_qd_vec = qd_vec;
     end
     
     
     %% calculate control
     
     env = Ctrl_merge_vector_controller1(env.q, sframe, env);
+    
+    for it = 1 : env.targets_num+1
+        env.last_qd_vec(:,it) = env.last_qd_vec(:,it) + env.Ego_dynam(env.last_qd_vec(:,it), [0;0], env.model_param)*env.TIME_STEP;
+    end
 end
 

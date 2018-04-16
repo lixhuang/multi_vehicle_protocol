@@ -8,10 +8,10 @@ function env = merge1
     
     % for Simple_4states_model
     % x; y; theta; v
-    env.q_init = [22.7378584027640;
-        -0.368355227189024;
-        -0.0205807506130510;
-        32.3396081758055];
+    env.q_init = [2.28995793340750;
+        -0.535615501771987;
+        -0.0483446240083061;
+        29.9736564416078];
     env.q = env.q_init;
     env.u = [0;0];
     env.q_dim = length(env.q_init);
@@ -25,16 +25,18 @@ function env = merge1
     
     %setup targets
     env.targets_num = 2;
-    env.targets(1).q_init = [26;-3.7;0;30];
+    env.targets(1).q_init = [8;-3.7;0;30];
     env.targets(1).q = env.targets(1).q_init;
-    env.targets(1).u = [0;0];
+    env.targets(1).u = [0;1];
     env.targets(1).q_dim = length(env.targets(1).q);
     env.targets(1).u_dim = length(env.targets(1).u);
-    env.targets(2).q_init = [48;-3.7;0;30];
+    env.targets(1).valid = 1;
+    env.targets(2).q_init = [30;-3.7;0;30];
     env.targets(2).q = env.targets(2).q_init;
-    env.targets(2).u = [0;0];
+    env.targets(2).u = [0;1];
     env.targets(2).q_dim = length(env.targets(2).q);
     env.targets(2).u_dim = length(env.targets(2).u);
+    env.targets(2).valid = 1;
 
     
     %setup methods

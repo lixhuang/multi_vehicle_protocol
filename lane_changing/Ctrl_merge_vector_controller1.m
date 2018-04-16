@@ -54,7 +54,9 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     %prepare targets
     targets = [];
     for i = 1:length(sframe.targets)
-        targets = [targets, targetsbar(i).q];
+        if(sframe.targets(i).valid)
+            targets = [targets, targetsbar(i).q];
+        end
     end
     % velocity control
     % first fdesign

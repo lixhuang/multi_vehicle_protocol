@@ -3,6 +3,7 @@ function J = smpc_cost( qd, env )
     ref_blocking = env.ref_blocking;
     
     J = 0;
+    J = J + 10*sum((qd(1:2)-env.q(1:2)).^2);
     temp_q = env.q;
     temp_targs = env.targets;
     
@@ -17,16 +18,10 @@ function J = smpc_cost( qd, env )
             %% calculate control
             sframe = env.Sensing(env); 
             env = env.Controller(env.q, sframe, env, 1);
-            % TO DO: need to get target control from env!
-            for k = 1 : env.targets_num
-                if(env.targets(k).valid)
-                    env.targets(k).u = env.targets(k).u;
-                end
-            end
             
             %% system record
 %             env.q_log(:,i) = env.q;
-%             env.u_log(:,i) = env.u;
+             env.u_log(:,i) = env.u;
 %             for k = 1:env.targets_num
 %                 env.targets(k).q_log(:,i) = env.targets(k).q;
 %             end
@@ -48,7 +43,7 @@ function J = smpc_cost( qd, env )
         end
         
         J = J + env.case_prob(case_it)*sum(sum(env.u_log.^2));
-        
+        %J = J + 10*(qd(4)-30).^2;
 %         hold on
 %         plot(env.targets(1).q_log(1,:));
 %         plot(env.targets(2).q_log(1,:));

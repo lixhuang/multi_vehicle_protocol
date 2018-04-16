@@ -25,7 +25,7 @@ function env = Script_stochastic_targets(env, i)
                 end
                 
                 val = [-1 0 1];
-                P = reshape(env.TM(state_last,state_last2,:),[],2);
+                P = reshape(env.TM(state_last+1,state_last2+1,:),[1,3]);
                 env.targets(k).u = [0;val_select(P,val)];              
             end        
         end
