@@ -11,17 +11,19 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.q = q;
             virtual_env.q_dim = env.q_dim;
             virtual_env.u_dim = env.u_dim;
-            %virtual_env.targets_num = sframe.targets_num;
-            %virtual_env.targets = sframe.targets;
-            virtual_env.targets_num = 2;
-            if(it > env.targets_num)
-                virtual_env.targets = [b_target;env.targets(1)];
-                virtual_env.targets(2).valid = 0;
-            else
-                virtual_env.targets = [b_target;env.targets(it)];
-                virtual_env.targets(2).valid = 1;
-                b_target = virtual_env.targets(2);
-            end
+            virtual_env.targets_num = sframe.targets_num;
+            virtual_env.targets = sframe.targets;
+            virtual_env.mg_id = it;
+            
+%             virtual_env.mg_targets_num = 2;
+%             if(it > env.targets_num)
+%                 virtual_env.mg_targets = [b_target;env.targets(1)];
+%                 virtual_env.mg_targets(2).valid = 0;
+%             else
+%                 virtual_env.mg_targets = [b_target;env.targets(it)];
+%                 virtual_env.mg_targets(2).valid = 1;
+%                 b_target = virtual_env.mg_stargets(2);
+%             end
             virtual_env.model_param = env.model_param;
 %             
 %             if(it ~= 3)
@@ -93,7 +95,7 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
     %         virtual_env.case_prob = [1];
     %         virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
             if(virtual_env.targets(1).valid)
-                    qd = sframe.targets(1).q-[10;0;0;0];
+                qd = sframe.targets(1).q-[10;0;0;0];
             end
             if(virtual_env.targets(2).valid)
                 qd = sframe.targets(2).q+[10;0;0;0];

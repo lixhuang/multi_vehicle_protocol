@@ -18,20 +18,23 @@ function [c,ceq] = smpc_constraints( qd, env )
             
             %% caluclate constraint on current qd
             start_idx = (case_it-1)*cons_dim_t+(i-1)*cons_dim;
-            if(env.targets(1).valid)
+            if(env.mg_id == 1)
                 v1 = env.qd(1:2) - env.targets(1).q(1:2);
                 d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
                 c(start_idx+8) = 1000*(-d2+env.d_sep);
-            else
+                c(start_idx+9) = -10;
+            elseif(env.mg_id > env.targets_num)
                 c(start_idx+8) = -10;
-            end
-            
-            if(env.targets(2).valid)
                 v2 = env.qd(1:2) - env.targets(2).q(1:2);
                 d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
                 c(start_idx+9) = 1000*(d3+env.d_sep);
             else
-                c(start_idx+9) = -10;
+                v1 = env.qd(1:2) - env.targets(1).q(1:2);
+                d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
+                c(start_idx+8) = 1000*(-d2+env.d_sep);
+                v2 = env.qd(1:2) - env.targets(2).q(1:2);
+                d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
+                c(start_idx+9) = 1000*(d3+env.d_sep);
             end
             
             %% calculate control (would envolve qd)
