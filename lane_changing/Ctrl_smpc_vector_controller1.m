@@ -25,10 +25,10 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
 %                 b_target = virtual_env.mg_stargets(2);
 %             end
             virtual_env.model_param = env.model_param;
-%             
-%             if(it ~= 3)
-%                 continue;
-%             end
+            
+            if(it ~= 2)
+                continue;
+            end
             
             virtual_env.Controller = @Ctrl_merge_vector_controller1;
             virtual_env.Sensing = @Sens_deterministic_simple;
@@ -38,10 +38,10 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.p_horizon = 45;
             virtual_env.TIME_STEP = 0.1;
             virtual_env.ref_blocking = 45;
-            virtual_env.u1_max = pi/6;
-            virtual_env.u1_min = -pi/6;
-            virtual_env.u2_max = 100;
-            virtual_env.u2_min = -100;
+            virtual_env.u1_max = pi/9;
+            virtual_env.u1_min = -pi/9;
+            virtual_env.u2_max = 10;
+            virtual_env.u2_min = -10;
             virtual_env.v_max = 1000;
             virtual_env.d_min = 2.9;
             virtual_env.d_sep = 8;
@@ -91,9 +91,9 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.case_prob = weighted_m(end-virtual_env.case_num+1:end,1);
             virtual_env.case_list = weighted_m(end-virtual_env.case_num+1:end,2:end);
 
-    %         virtual_env.case_num = 1;
-    %         virtual_env.case_prob = [1];
-    %         virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
+            virtual_env.case_num = 1;
+            virtual_env.case_prob = [1];
+            virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
             if(it == 1)
                 qd = sframe.targets(1).q-[10;0;0;0];
             elseif(it > env.targets_num)
