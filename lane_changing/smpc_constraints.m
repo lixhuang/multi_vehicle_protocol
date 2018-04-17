@@ -21,13 +21,13 @@ function [c,ceq] = smpc_constraints( qd, env )
             if(env.mg_id == 1)
                 v1 = env.qd(1:2) - env.targets(1).q(1:2);
                 d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;
-                c(start_idx+8) = 1000*(-d2+env.d_sep);
+                c(start_idx+8) = 1000*(d2+env.d_sep);
                 c(start_idx+9) = -10;
             elseif(env.mg_id > env.targets_num)
                 c(start_idx+8) = -10;
                 v2 = env.qd(1:2) - env.targets(2).q(1:2);
                 d3 = [cos(env.targets(2).q(3)), sin(env.targets(2).q(3))]*v2;
-                c(start_idx+9) = 1000*(d3+env.d_sep);
+                c(start_idx+9) = 1000*(-d3+env.d_sep);
             else
                 v1 = env.qd(1:2) - env.targets(1).q(1:2);
                 d2 = [cos(env.targets(1).q(3)), sin(env.targets(1).q(3))]*v1;

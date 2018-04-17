@@ -3,7 +3,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         simple_flag = 0;
     end
     
-    vbar_max = 3;
+    vbar_max = 1.7;
     %% get qd
     %qd = 0.2*sframe.targets(1).q+0.8*sframe.targets(2).q;
     qd = env.qd;
@@ -57,7 +57,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     phi = atan2(ybar,xbar);
     
     %% compute control in relative space
-    Ka = -2;
+    Ka = -7;
     Kv = -4;
     
     %prepare targets
@@ -71,7 +71,7 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     % first fdesign
     %vbar_d=vbar_max*1/(r+5)^2*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*r/(r+5));
     %second design
-    eps=0.3;
+    eps=0.18;
     vbar_d=vbar_max*2*eps/(1+exp(-eps*r))^2*exp(-eps*r)*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*(2/(1+exp(-eps*r))-1));
     % angle control
     [vec_ref, theta_ref_d] = merge_vector_field(targets, [xbar; ybar; thetabar; vbar], env);

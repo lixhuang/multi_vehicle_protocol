@@ -4,6 +4,9 @@ function env = Script_stochastic_targets(env, i)
     %EFFECTS: model targets car to be stochastic
     %MODIFIES: env.targets(k).u which is [steering angle; acc]
     markov_freq = 15*(0.1/0.01);
+    if(~exist("env.target1_u"))
+        env.target1_u = env.targets(1).u;
+    end
     if(mod(i, markov_freq)==0)
         
         for k = 1 : env.targets_num
@@ -26,9 +29,20 @@ function env = Script_stochastic_targets(env, i)
                 
                 val = [-1 0 1];
                 P = reshape(env.TM(state_last+1,state_last2+1,:),[1,3]);
-                env.targets(k).u = [0;val_select(P,val)];              
-            end        
+                env.targets(k).u = [0;val_select(P,val)];
+                if(k==1)
+                    env.target1_u = env.targets(k).u;
+                end
+            end
+            
         end
+    end
+
+    d = sqrt(sum((env.targets(1).q(1:2)-env.targets(2).q(1:2)).^2));
+    if(d < 12)
+        env.targets(1).u = [0;5*(d-12)];
+    else
+        env.targets(1).u = env.target1_u;
     end
 end
 
