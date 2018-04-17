@@ -3,7 +3,7 @@ clear global;
 %profile on;
 
 %Load_env; % load global variable
-env = Setup('lane_changing',@smpc_merge_sim1); %load initial settings
+env = Setup('lane_changing',@smpc_merge_sim3); %load initial settings
 
 
 for i = 1:length(env.tspan)

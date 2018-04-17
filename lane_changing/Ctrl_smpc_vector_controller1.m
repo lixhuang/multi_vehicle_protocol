@@ -91,9 +91,9 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
             virtual_env.case_prob = weighted_m(end-virtual_env.case_num+1:end,1);
             virtual_env.case_list = weighted_m(end-virtual_env.case_num+1:end,2:end);
 
-            virtual_env.case_num = 1;
-            virtual_env.case_prob = [1];
-            virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
+%             virtual_env.case_num = 1;
+%             virtual_env.case_prob = [1];
+%             virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
             if(it == 1)
                 qd = sframe.targets(1).q-[10;0;0;0];
             elseif(it > env.targets_num)

@@ -39,8 +39,8 @@ function env = Script_stochastic_targets(env, i)
     end
 
     d = sqrt(sum((env.targets(1).q(1:2)-env.targets(2).q(1:2)).^2));
-    if(d < 12)
-        env.targets(1).u = [0;5*(d-12)];
+    if(d < 18)
+        env.targets(1).u = [0;10*(d-12)];
     else
         env.targets(1).u = env.target1_u;
     end
