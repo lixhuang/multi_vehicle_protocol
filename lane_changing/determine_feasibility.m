@@ -3,6 +3,9 @@ function res = determine_feasibility(env)
     temp_targs = env.targets;
     d2 = 0;
     res = 1;
+    if(env.mg_id == 1 || env.mg_id > env.targets_num)
+        return;
+    end
     
     for case_it = 1:env.case_num       
         env.targets = temp_targs;

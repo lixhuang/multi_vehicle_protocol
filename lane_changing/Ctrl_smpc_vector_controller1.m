@@ -94,15 +94,14 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
     %         virtual_env.case_num = 1;
     %         virtual_env.case_prob = [1];
     %         virtual_env.case_list = 5*ones([1,virtual_env.p_horizon]);
-            if(virtual_env.targets(1).valid)
+            if(it == 1)
                 qd = sframe.targets(1).q-[10;0;0;0];
-            end
-            if(virtual_env.targets(2).valid)
+            elseif(it > env.targets_num)
                 qd = sframe.targets(2).q+[10;0;0;0];
-            end
-            if(virtual_env.targets(1).valid && virtual_env.targets(2).valid)
+            elseif(virtual_env.targets(1).valid && virtual_env.targets(2).valid)
                 qd = 0.5*sframe.targets(1).q+0.5*sframe.targets(2).q;
             end
+            
             if(env.i == 1)
                 
             else
@@ -120,6 +119,7 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
                 J_vec(it) = Inf;               
                 continue;
             end
+            
             % solve
             [qd_opt,~,exitflag,~] = fmincon(@(x)smpc_cost(x,virtual_env), qd, [],[],[],[],[],[],.....
                 @(x)smpc_constraints(x,virtual_env));

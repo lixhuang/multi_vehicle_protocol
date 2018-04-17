@@ -27,7 +27,7 @@
             continue;
         end
         if(f == 1)
-            show("overlap obstacle error");
+            disp("overlap obstacle error");
         end
         f = 1;
         

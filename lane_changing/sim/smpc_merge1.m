@@ -10,7 +10,7 @@ function env = smpc_merge1
     
     % for Simple_4states_model
     % x; y; theta; v
-    env.q_init = [-16;0;0;31];
+    env.q_init = [-10;0;0;31];
     env.q = env.q_init;
     env.u = [0;0];
     env.q_dim = length(env.q_init);
@@ -24,15 +24,15 @@ function env = smpc_merge1
     
     %setup targets
     env.targets_num = 2;
-    env.targets(1).q_init = [-10;-3.7;0;30];
+    env.targets(1).q_init = [-12;-3.7;0;30];
     env.targets(1).q = env.targets(1).q_init;
-    env.targets(1).u = [0;0];
+    env.targets(1).u = [0;1];
     env.targets(1).q_dim = length(env.targets(1).q);
     env.targets(1).u_dim = length(env.targets(1).u);
     env.targets(1).valid = 1;
     env.targets(2).q_init = [12;-3.7;0;30];
     env.targets(2).q = env.targets(2).q_init;
-    env.targets(2).u = [0;0];
+    env.targets(2).u = [0;-1];
     env.targets(2).q_dim = length(env.targets(2).q);
     env.targets(2).u_dim = length(env.targets(2).u);
     env.targets(2).valid = 1;
