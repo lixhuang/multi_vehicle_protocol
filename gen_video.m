@@ -37,6 +37,7 @@ function gen_video(env, mode)
                 draw_car_can(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
                 draw_circile_collision(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
             end
+            draw_car_grey(env.qd_log(1,n), env.qd_log(2,n), env.qd_log(3,n));
             draw_car_red(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
             draw_circile_collision(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
         end
