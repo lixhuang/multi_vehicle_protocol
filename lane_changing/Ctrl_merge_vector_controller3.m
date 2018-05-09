@@ -82,6 +82,7 @@ function env = Ctrl_merge_vector_controller3(q, sframe, env, simple_flag)
         (vbar*cos(thetabar)-tvbar*cos(tthetabar))*(ybar-tybar))/((ybar-tybar)^2+(xbar-txbar)^2);
     vm_d = tvbar*sin(tthetabar-atan2(ybar-tybar,xbar-txbar))*phid_d;
     eps=0.18;
+    eps=0.3;
     vc = vbar_max*(2/(1+exp(-eps*r))-1);
     vc_d = vbar_max*2*eps/(1+exp(-eps*r))^2*exp(-eps*r)*cos(thetabar-phi)*vbar;
     vF = sigma*vc + (1-sigma)*vm;

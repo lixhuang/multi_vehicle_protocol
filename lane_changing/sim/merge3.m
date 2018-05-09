@@ -3,7 +3,7 @@ function env = merge3
     %Load_env;
     
     env.TIME_STEP = 0.01;
-    env.SIM_LENGTH = 25;
+    env.SIM_LENGTH = 30;
     env.tspan = 0;
     
     % for Simple_4states_model
