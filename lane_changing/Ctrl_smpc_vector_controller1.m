@@ -135,6 +135,9 @@ function env = Ctrl_smpc_vector_controller1(q, sframe, env)
         comp_vec = sortrows(comp_vec);
         env.qd = comp_vec(1,2:end)';
         env.last_qd_vec = qd_vec;
+        if(comp_vec(1,1) == Inf)
+            env.qd = [env.q(1);0;0;30];
+        end
     end
     
     

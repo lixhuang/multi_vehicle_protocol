@@ -4,10 +4,10 @@
     % repulsive funcrtion distance
     ob_sz = env.model_param.car_w;
     sep_min = env.model_param.min_sep;
-    sig_d = 5.7;
     dm = 2*ob_sz;
     dr = dm+sep_min;
     ds = dr+env.model_param.blend_width;
+    sig_d = ds;
     f = 0;
     sz = size(targets);
     
@@ -52,13 +52,17 @@
             l = 0;
         end
         
-        fx = (l-1)*px*x^2+l*py*x*y-px*y^2;
-        fy = (l-1)*py*y^2+l*px*x*y-py*x^2;
+        %fx = (l-1)*px*x^2+l*py*x*y-px*y^2;
+        %fy = (l-1)*py*y^2+l*px*x*y-py*x^2;
+        fx = x;
+        fy = y;
         fxn = fx/sqrt(fx^2+fy^2);
         fyn = fy/sqrt(fx^2+fy^2);
         
-        dfx = 2*(l-1)*x*px*dx+l*py*(x*dy+y*dx)-2*px*y*dy+(l-1)*x^2*dpx+l*x*y*dpy-y^2*dpx;
-        dfy = 2*(l-1)*y*py*dy+l*px*(x*dy+y*dx)-2*py*x*dx+(l-1)*y^2*dpy+l*x*y*dpx-x^2*dpy;
+        %dfx = 2*(l-1)*x*px*dx+l*py*(x*dy+y*dx)-2*px*y*dy+(l-1)*x^2*dpx+l*x*y*dpy-y^2*dpx;
+        %dfy = 2*(l-1)*y*py*dy+l*px*(x*dy+y*dx)-2*py*x*dx+(l-1)*y^2*dpy+l*x*y*dpx-x^2*dpy;
+        dfx = dx;
+        dfy = dy;
         dfxn = dfx/sqrt(fx^2+fy^2)-(fx*dfx+fy*dfy)*fx/(fx^2+fy^2)^(3/2);
         dfyn = dfy/sqrt(fx^2+fy^2)-(fx*dfx+fy*dfy)*fy/(fx^2+fy^2)^(3/2);
         
@@ -66,11 +70,7 @@
         dbeta = -2*x*dx-2*y*dy;
         beta_in = ob_sz^2-dr^2;
         beta_out = ob_sz^2-sig_d^2;
-        if(beta>beta_in)
-            vec = [0;0];
-            dtheta = 0;
-            return
-        end
+        
         cof_mat = [beta_out^3,beta_out^2,beta_out,1;
             3*beta_out^2,2*beta_out,1,0;
             beta_in^3,beta_in^2,beta_in^1,1;
@@ -78,6 +78,18 @@
         coff = cof_mat^-1*[1;0;0;0];
         sigma = [beta^3,beta^2,beta,1]*coff;
         dsigma = [3*beta^2,2*beta,1,0]*coff*dbeta;
+        sigma = sigma;
+        dsigma = 1/3*sigma^(-2/3)*dsigma;
+        if(beta>beta_in)
+            if(beta < ob_sz^2-dm^2)
+                sigma = 0;
+                dsigma = 0;
+            else
+                vec = [0;0];
+                dtheta = 0;
+                return
+            end
+        end
     end
     fxa = -xbar;
     fya = -ybar;

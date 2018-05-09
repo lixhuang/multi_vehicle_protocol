@@ -57,8 +57,8 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
     phi = atan2(ybar,xbar);
     
     %% compute control in relative space
-    Ka = -7;
-    Kv = -4;
+    Ka = -1;
+    Kv = -1;
     
     %prepare targets
     targets = [];
