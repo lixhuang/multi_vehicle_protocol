@@ -4,7 +4,6 @@ function env = Ctrl_merge_vector_controller2(q, sframe, env, simple_flag)
     end
     
     env.qd = 0.4*sframe.targets(1).q+0.6*sframe.targets(2).q;
-    vbar_max = 3;
     
     env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag);
 end

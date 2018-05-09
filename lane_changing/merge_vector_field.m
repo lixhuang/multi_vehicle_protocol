@@ -1,4 +1,4 @@
- function [vec, dtheta] = merge_vector_field(targets, q, env)
+ function [vec, dtheta, sigma, dsigma, reti] = merge_vector_field(targets, q, env)
     % work for circular object
     % q = [x, y, theta, v]
     % repulsive funcrtion distance
@@ -19,6 +19,7 @@
     fy = 0;
     sigma = 1;
     dsigma = 0;
+    reti = 1;
     
     for i = 1:sz(2)
         d_vec = [xbar-targets(1,i); ybar-targets(2,i)];
@@ -27,9 +28,10 @@
             continue;
         end
         if(f == 1)
-            %disp("overlap obstacle error");
+            disp("overlap obstacle error");
         end
         f = 1;
+        reti = i;
         
         xt = targets(1,i);
         yt = targets(2,i);
@@ -78,8 +80,6 @@
         coff = cof_mat^-1*[1;0;0;0];
         sigma = [beta^3,beta^2,beta,1]*coff;
         dsigma = [3*beta^2,2*beta,1,0]*coff*dbeta;
-        sigma = sigma;
-        dsigma = 1/3*sigma^(-2/3)*dsigma;
         if(beta>beta_in)
             if(beta < ob_sz^2-dm^2)
                 sigma = 0;

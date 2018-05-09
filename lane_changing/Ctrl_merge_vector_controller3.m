@@ -1,32 +1,21 @@
-function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
+function env = Ctrl_merge_vector_controller3(q, sframe, env, simple_flag)
     if(nargin==3)
         simple_flag = 0;
     end
     
+    Ka = 7;
+    Kv = 4;
     vbar_max = 1.7;
+    
+    %% overide dm dr, dcwith settings
+    
     %% get qd
-    %qd = 0.2*sframe.targets(1).q+0.8*sframe.targets(2).q;
     qd = env.qd;
     
     
     %% TODO: change circular to ellipse and add environment set up for collision model
     
-    %% extract environment
-    d_min = 2*env.model_param.car_w + env.model_param.min_sep;
 
-    %% calculate qd and most risky target
-    risk_targ_id = 1;
-    risk_time = Inf;
-    for k = 1:env.targets_num
-        temp_distance = sqrt(sum((env.targets(k).q(1:2)-q(1:2)).^2));
-        temp_q = env.targets(k).q;
-        temp_v = (2*(q(1)-temp_q(1))*(q(4)*cos(q(3))-temp_q(4)*cos(temp_q(3)))+2*(q(2)-temp_q(2))*(q(4)*sin(q(3))-temp_q(4)*sin(temp_q(3))))/2/temp_distance;
-        if(temp_v < 0 && temp_distance/-temp_v < risk_time)
-            risk_targ_id = k;
-        end
-    end
-    risk_targ = sframe.targets(risk_targ_id).q;
-    risk_d = sum((q(1:2)-risk_targ(1:2)).^2);
     
     
     %% transfer space with qd
@@ -48,17 +37,15 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         targetsbar(i).q(4) = sqrt(targxbar_d^2+targybar_d^2);
         targetsbar(i).q(3) = atan2(targybar_d, targxbar_d) - qd(3);
     end
-    rqbar = targetsbar(risk_targ_id).q;
     
     r = sqrt(xbar^2+ybar^2);
     if(r < 0.5)
-        asdas = 1;
+        bk = 1;
     end
     phi = atan2(ybar,xbar);
     
     %% compute control in relative space
-    Ka = -7;
-    Kv = -4;
+   
     
     %prepare targets
     targets = [];
@@ -67,31 +54,48 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
             targets = [targets, targetsbar(i).q];
         end
     end
-    % velocity control
-    % first fdesign
-    %vbar_d=vbar_max*1/(r+5)^2*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*r/(r+5));
-    %second design
-    eps=0.18;
-    vbar_d=vbar_max*2*eps/(1+exp(-eps*r))^2*exp(-eps*r)*cos(thetabar-phi)*vbar+Kv*(vbar-vbar_max*(2/(1+exp(-eps*r))-1));
-    % angle control
-    [vec_ref, theta_ref_d, ~,~,~] = merge_vector_field(targets, [xbar; ybar; thetabar; vbar], env);
-    theta_ref = atan2(vec_ref(2), vec_ref(1));
-    collid_const = 2*(xbar-rqbar(1))*(vbar*cos(thetabar)-rqbar(4)*cos(rqbar(3)))+2*(ybar-rqbar(2))*(vbar*sin(thetabar)-rqbar(4)*sin(rqbar(3)));
-    if(collid_const > 0)
-        delta = 0;
-    else
-        delta = 0.5*wrapToPi(thetabar-theta_ref)/(risk_d-d_min)*collid_const;
-    end
-    thetabar_d=Ka*wrapToPi(thetabar-theta_ref)+theta_ref_d+delta;
     
-    r_converg_const = xbar*cos(thetabar)+ybar*sin(thetabar);
-    if(vbar > 0.001)
-        vbar_d2 = min(-r_converg_const, vbar_d);
-        if (vbar_d2 ~= vbar_d)
-            asdasd = 1;
-        end
-        vbar_d = vbar_d2;
+    % angle control
+    [vec_ref, theta_ref_d, sigma, dsigma, reti] = merge_vector_field(targets, [xbar; ybar; thetabar; vbar], env);
+    theta_ref = atan2(vec_ref(2), vec_ref(1));
+%     collid_const = 2*(xbar-rqbar(1))*(vbar*cos(thetabar)-rqbar(4)*cos(rqbar(3)))+2*(ybar-rqbar(2))*(vbar*sin(thetabar)-rqbar(4)*sin(rqbar(3)));
+%     if(collid_const > 0)
+%         delta = 0;
+%     else
+%         delta = 0.5*wrapToPi(thetabar-theta_ref)/(risk_d-d_min)*collid_const;
+%     end
+    thetabar_d=theta_ref_d - Ka*wrapToPi(thetabar-theta_ref);
+    
+    % velocity control
+    txbar = targetsbar(reti).q(1);
+    tybar = targetsbar(reti).q(2);
+    tvbar = targetsbar(reti).q(3);
+    tthetabar = targetsbar(reti).q(4);
+    col_const = cos(tthetabar-atan2(ybar-tybar,xbar-txbar));
+    eps_v = 0;
+    if(col_const > 0)
+        vm = (tvbar+eps_v)*col_const;
+    else
+        vm = (tvbar-eps_v)*col_const;
     end
+    phid_d = ((vbar*sin(thetabar)-tvbar*sin(tthetabar))*(xbar-txbar)-.....
+        (vbar*cos(thetabar)-tvbar*cos(tthetabar))*(ybar-tybar))/((ybar-tybar)^2+(xbar-txbar)^2);
+    vm_d = tvbar*sin(tthetabar-atan2(ybar-tybar,xbar-txbar))*phid_d;
+    eps=0.18;
+    vc = vbar_max*(2/(1+exp(-eps*r))-1);
+    vc_d = vbar_max*2*eps/(1+exp(-eps*r))^2*exp(-eps*r)*cos(thetabar-phi)*vbar;
+    vF = sigma*vc + (1-sigma)*vm;
+    vF_d = sigma*vc_d + (1-sigma)*vm_d + dsigma*vc - dsigma*vm;
+    vbar_d=vF_d-Kv*(vbar-vF);
+    
+%     r_converg_const = xbar*cos(thetabar)+ybar*sin(thetabar);
+%     if(vbar > 0.001)
+%         vbar_d2 = min(-r_converg_const, vbar_d);
+%         if (vbar_d2 ~= vbar_d)
+%             asdasd = 1;
+%         end
+%         vbar_d = vbar_d2;
+%     end
     
     %% transfer back control
     a11 = xbar_d*sin(q(3))-ybar_d*cos(q(3));
@@ -114,12 +118,6 @@ function env = Ctrl_merge_vector_controller1(q, sframe, env, simple_flag)
         env.thetabar_error_log(env.i) = thetabar-theta_ref;
     else
         env.thetabar_error_log(env.i) = thetabar-theta_ref;
-    end
-    if(env.i == 1)
-        env.col_const_log = zeros([1,length(env.tspan)]);
-        env.col_const_log(env.i) = delta;
-    else
-        env.col_const_log(env.i) = delta;
     end
     if(env.i == 1)
         env.derror_log = zeros([1,length(env.tspan)]);
