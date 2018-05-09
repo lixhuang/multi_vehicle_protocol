@@ -6,8 +6,8 @@
     sep_min = env.model_param.min_sep;
     dm = 2*ob_sz;
     dr = dm+sep_min;
-    ds = dr+env.model_param.blend_width;
-    sig_d = ds;
+    dc = dr+env.model_param.blend_width;
+    sig_d = dc;
     f = 0;
     sz = size(targets);
     
