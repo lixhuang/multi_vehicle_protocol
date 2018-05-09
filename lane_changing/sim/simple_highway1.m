@@ -4,7 +4,9 @@ function env = merge3
     
     env.TIME_STEP = 0.01;
     env.SIM_LENGTH = 25;
+    env.planning_blocking = 50;
     env.tspan = 0;
+    env.sens_r = 40;
     
     % for Simple_4states_model
     % x; y; theta; v
@@ -36,7 +38,7 @@ function env = merge3
     env.targets(2).valid = 1;
     
     env.Vr = [1;2];
-    env.Vc = [];
+    env.Vc = [0;0];
     env.Vl = [];
 
     
