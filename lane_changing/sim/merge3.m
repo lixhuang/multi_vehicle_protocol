@@ -16,8 +16,8 @@ function env = merge3
     
     % car param
     env.model_param.car_w = 2.4/2;
-    env.model_param.min_sep = 0.5;
-    env.model_param.blend_width = 5.7-0.5-2.4;
+    env.model_param.min_sep = 1;
+    env.model_param.blend_width = 4.5-1-2.4;
     env.model_param.l = 4.5;
     
     %setup targets

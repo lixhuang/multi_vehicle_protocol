@@ -5,7 +5,7 @@ function gen_video(env, mode)
     end
     addpath('drawlib');
     
-    pile_size = 80;
+    pile_size = 40;
     w_l = 20;
     w_r = 30;
 

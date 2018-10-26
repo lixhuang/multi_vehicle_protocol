@@ -1,7 +1,7 @@
 function env = Ctrl_simple_highway_controller1(q, sframe, env)
 
     if(mod(env.i-1,env.planning_blocking)==0)
-        if(exist("env.qd"))
+        if(isfield(env,"qd"))
             qd = env.qd;
         else
             qd = 0;
@@ -16,28 +16,26 @@ function env = Ctrl_simple_highway_controller1(q, sframe, env)
         %% prepare dummy target
         targets = sframe.targets;
         dummy = targets(1);
+        dummy.q(3) = 0;
+        dummy.q(4) = 31;
+        
         dummy.q(2) = 0;
-        dummy.q(1) = dummy.q(1)-env.sens_r;
+        dummy.q(1) = q(1)-env.sens_r;
         targets(sframe.targets_num+1) = dummy;
-        dummy = targets(1);
         dummy.q(2) = 0;
-        dummy.q(1) = dummy.q(1)+env.sens_r;
+        dummy.q(1) = q(1)+env.sens_r;
         targets(sframe.targets_num+2) = dummy;
-        dummy = targets(1);
         dummy.q(2) = -3.7;
-        dummy.q(1) = dummy.q(1)-env.sens_r;
+        dummy.q(1) = q(1)-env.sens_r;
         targets(sframe.targets_num+3) = dummy;
-        dummy = targets(1);
         dummy.q(2) = -3.7;
-        dummy.q(1) = dummy.q(1)+env.sens_r;
+        dummy.q(1) = q(1)+env.sens_r;
         targets(sframe.targets_num+4) = dummy;
-        dummy = targets(1);
         dummy.q(2) = 3.7;
-        dummy.q(1) = dummy.q(1)-env.sens_r;
+        dummy.q(1) = q(1)-env.sens_r;
         targets(sframe.targets_num+5) = dummy;
-        dummy = targets(1);
         dummy.q(2) = 3.7;
-        dummy.q(1) = dummy.q(1)+env.sens_r;
+        dummy.q(1) = q(1)+env.sens_r;
         targets(sframe.targets_num+6) = dummy;
 
         Vr = [sframe.targets_num+3;env.Vr;sframe.targets_num+4];
@@ -62,9 +60,9 @@ function env = Ctrl_simple_highway_controller1(q, sframe, env)
         virtual_env.Ego_dynam = env.Ego_dynam;
         virtual_env.Target_dynam = env.Target_dynam;
 
-        virtual_env.p_horizon = 40;
+        virtual_env.p_horizon = 50;
         virtual_env.TIME_STEP = 0.05;
-
+        
         t_m = env.planning_blocking*env.TIME_STEP;
         J_min = Inf;
         for k = 1:length(Vr)
@@ -72,15 +70,63 @@ function env = Ctrl_simple_highway_controller1(q, sframe, env)
                 continue;
             end
             vt = targets(Vr(k+1)).q(1:2) - targets(Vr(k)).q(1:2);
-            vf = targets(Vc(2)).q(1:2) - targets(Vr(k+1)).q(1:2);
-            vb = targets(Vc(1)).q(1:2) - targets(Vr(k)).q(1:2);
+            vf = -(targets(Vc(2)).q(1:2) - targets(Vr(k+1)).q(1:2));
+            vb = -(targets(Vc(1)).q(1:2) - targets(Vr(k)).q(1:2));
 
             dist_t = sqrt(sum(vt.^2))-(targets(Vr(k+1)).q(4)-targets(Vr(k)).q(4))*t_m-u_max*t_m^2;
+            dist_f = vf'*vt/sqrt(sum(vt.^2));%-(targets(Vc(2)).q(4)-targets(Vr(k)).q(4))*t_m-u_max*t_m^2;
+            dist_b = vb'*vt/sqrt(sum(vt.^2));%-(targets(Vr(k+1)).q(4)-targets(Vc(1)).q(4))*t_m-u_max*t_m^2;
+
+            if(dist_t > 2*ds && dist_f >= 0 && dist_b <= 0)
+                qd_temp = 0.5*targets(Vr(k)).q+0.5*targets(Vr(k+1)).q;
+                if(k==1 && length(Vr)~=0)
+                    qd_temp = targets(Vr(k+1)).q;
+                    qd_temp(1) = qd_temp(1)-13;
+                end
+                if(k==length(Vr)-1 && length(Vr)~=0)
+                    qd_temp = targets(Vr(k)).q;
+                    qd_temp(1) = qd_temp(1)+13;
+                end
+                virtual_env.qd = qd_temp;
+                J_temp = simple_cost(qd_temp, virtual_env);
+                %J_temp = 0;
+
+                %% prepare environment
+
+                if(J_temp < J_min)
+                    qd = qd_temp;
+                    J_min = J_temp;
+                end
+            end
+        end
+        
+%         if(env.i>1700)
+%             asdas=1;
+%         end
+        
+        for k = 1:length(Vl)
+            if( k == length(Vl))
+                continue;
+            end
+            vt = targets(Vl(k+1)).q(1:2) - targets(Vl(k)).q(1:2);
+            vf = -(targets(Vc(2)).q(1:2) - targets(Vl(k+1)).q(1:2));
+            vb = -(targets(Vc(1)).q(1:2) - targets(Vl(k)).q(1:2));
+
+            dist_t = sqrt(sum(vt.^2))-(targets(Vl(k+1)).q(4)-targets(Vl(k)).q(4))*t_m-u_max*t_m^2;
             dist_f = vf'*vt/sqrt(sum(vt.^2));
             dist_b = vb'*vt/sqrt(sum(vt.^2));
 
             if(dist_t > 2*ds && dist_f >= 0 && dist_b <= 0)
-                qd_temp = 0.5*targets(Vr(k)).q+0.5*targets(Vr(k+1)).q;
+                qd_temp = 0.5*targets(Vl(k)).q+0.5*targets(Vl(k+1)).q;
+                if(k==1 && length(Vl)~=0)
+                    qd_temp = targets(Vl(k+1)).q;
+                    qd_temp(1) = qd_temp(1)-15;
+                end
+                if(k==length(Vl)-1 && length(Vl)~=0)
+                    qd_temp = targets(Vl(k)).q;
+                    qd_temp(1) = qd_temp(1)+15;
+                end
+                
                 virtual_env.qd = qd_temp;
                 J_temp = simple_cost(qd_temp, virtual_env);
                 %J_temp = 0;
@@ -93,6 +139,26 @@ function env = Ctrl_simple_highway_controller1(q, sframe, env)
                 end
             end
         end    
+        
+
+        vt = targets(Vc(2)).q(1:2) - targets(Vc(1)).q(1:2);
+
+        dist_t = sqrt(sum(vt.^2))-(targets(Vc(2)).q(4)-targets(Vc(1)).q(4))*t_m-u_max*t_m^2;
+        dist_t = inf;
+        if(dist_t > 2*ds)
+            qd_temp = 0.5*targets(Vc(2)).q+0.5*targets(Vc(1)).q;
+            virtual_env.qd = qd_temp;
+            J_temp = simple_cost(qd_temp, virtual_env);
+            %J_temp = 0;
+
+            %% prepare environment
+
+            if(J_temp < J_min)
+                qd = qd_temp;
+                J_min = J_temp;
+            end
+        end   
+        
         env.qd = qd;
     end
     env = Ctrl_merge_vector_controller3(env.q, sframe, env);

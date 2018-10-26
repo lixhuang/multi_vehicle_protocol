@@ -19,10 +19,10 @@ function J = simple_cost( qd, env )
                     env.Target_dynam(env.targets(k).q, [0;0], env.model_param)*env.TIME_STEP;
             end
         end
-        
-        J = J + sum(sum(env.u_log.^2));
-
+        J = J + 1000*(env.q(4)-31)^2;
     end
+    
+    J = J + sum(sum(env.u_log.^2));
 
 
 end

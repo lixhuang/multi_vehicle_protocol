@@ -1,7 +1,7 @@
 addpath('drawlib');
 figure;
-pile_size = 80;
-for n = 1:10:length(env.tspan)
+pile_size = 50;
+for n = 1:30:length(env.tspan)
     hold on;
     axis equal;
     
@@ -14,6 +14,9 @@ for n = 1:10:length(env.tspan)
     for k = 1:env.targets_num
         draw_car_can(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
         draw_circile_collision(env.targets(k).q_log(1,n), env.targets(k).q_log(2,n), env.targets(k).q_log(3,n));
+    end
+    if(isfield(env,'qd_log'))
+        draw_car_grey(env.qd_log(1,n), env.qd_log(2,n), env.qd_log(3,n));
     end
     draw_car_red(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));
     draw_circile_collision(env.q_log(1,n), env.q_log(2,n), env.q_log(3,n));

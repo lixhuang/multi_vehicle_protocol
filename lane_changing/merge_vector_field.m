@@ -93,10 +93,10 @@
     end
     fxa = -xbar;
     fya = -ybar;
-    if(ybar==0)
-        fxa = 0;
-        fya = 0; 
-    end
+%     if(ybar==0)
+%         fxa = 0;
+%         fya = 0; 
+%     end
     dfxa = -dxbar;
     dfya = -dybar;
     

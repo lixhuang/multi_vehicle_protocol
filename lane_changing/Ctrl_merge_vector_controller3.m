@@ -3,9 +3,14 @@ function env = Ctrl_merge_vector_controller3(q, sframe, env, simple_flag)
         simple_flag = 0;
     end
     
+    if(q(1:2)==env.qd(1:2))
+        env.u = [0;0];
+        return;
+    end
+    
     Ka = 7;
     Kv = 4;
-    vbar_max = 1.7;
+    vbar_max = 1.3;
     
     %% overide dm dr, dcwith settings
     

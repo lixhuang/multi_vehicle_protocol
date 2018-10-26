@@ -3,7 +3,7 @@ clear global;
 %profile on;
 
 %Load_env; % load global variable
-env = Setup('lane_changing',@simple_highway3); %load initial settings
+env = Setup('lane_changing',@merge2_negative); %load initial settings
 
 
 for i = 1:length(env.tspan)
